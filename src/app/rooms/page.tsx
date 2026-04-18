@@ -30,9 +30,16 @@ export default function RoomsPage() {
       try {
         const response = await fetch('/api/rooms');
         const data = await response.json();
-        setRooms(data);
+        // 确保 data 是数组
+        if (Array.isArray(data)) {
+          setRooms(data);
+        } else {
+          console.error('Invalid rooms data:', data);
+          setRooms([]);
+        }
       } catch (error) {
         console.error('Error fetching rooms:', error);
+        setRooms([]);
       } finally {
         setLoading(false);
       }
@@ -42,13 +49,13 @@ export default function RoomsPage() {
   }, []);
 
   // 按楼层分组房间
-  const roomsByFloor = rooms.reduce((acc, room) => {
+  const roomsByFloor = Array.isArray(rooms) ? rooms.reduce((acc, room) => {
     if (!acc[room.floor]) {
       acc[room.floor] = [];
     }
     acc[room.floor].push(room);
     return acc;
-  }, {} as Record<number, Room[]>);
+  }, {} as Record<number, Room[]>) : {};
 
   // 获取所有楼层
   const floors = Object.keys(roomsByFloor).map(Number).sort((a, b) => a - b);

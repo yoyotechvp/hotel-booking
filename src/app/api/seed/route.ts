@@ -1,15 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
+import getPrisma from '@/lib/prisma';
 
 export async function POST(request: NextRequest) {
   try {
-    // 动态导入 Prisma Client
-    const { PrismaClient } = await import('@prisma/client');
-    const prisma = new PrismaClient();
+    // 获取 Prisma Client 实例
+    const prisma = await getPrisma();
 
     // 检查是否已存在房间数据
     const existingRooms = await prisma.room.count();
     if (existingRooms > 0) {
-      await prisma.$disconnect();
       return NextResponse.json({ message: 'Seed data already exists' });
     }
 
@@ -99,7 +98,6 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    await prisma.$disconnect();
     return NextResponse.json({ message: 'Seed data created successfully!' });
   } catch (error) {
     console.error('Error seeding data:', error);

@@ -3,7 +3,7 @@ let prisma: any;
 
 async function getPrisma() {
   if (!prisma) {
-    const { PrismaClient } = await import('../generated/prisma/client');
+    const { PrismaClient } = await import('@prisma/client');
     prisma = new PrismaClient();
   }
   return prisma;

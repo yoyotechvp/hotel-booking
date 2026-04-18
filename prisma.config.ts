@@ -13,6 +13,6 @@ export default defineConfig({
     path: "prisma/migrations",
   },
   datasource: {
-    url: `file:${resolve(__dirname, "hotel.db")}`,
+    url: `file:${resolve(__dirname, "prisma", "hotel.db")}`,
   },
 });

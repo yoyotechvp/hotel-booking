@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import prisma from '@/lib/prisma';
+import getPrisma from '@/lib/prisma';
 import { hashPassword, generateToken } from '@/lib/auth';
 
 export async function POST(request: NextRequest) {
@@ -10,6 +10,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
     }
 
+    const prisma = await getPrisma();
     const existingUser = await prisma.user.findUnique({ where: { email } });
     if (existingUser) {
       return NextResponse.json({ error: 'Email already exists' }, { status: 400 });
@@ -35,6 +36,7 @@ export async function POST(request: NextRequest) {
       token,
     });
   } catch (error) {
+    console.error('Error registering user:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

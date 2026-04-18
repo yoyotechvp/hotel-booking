@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
+import getPrisma from '@/lib/prisma';
 
 export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
   try {
-    // 动态导入 Prisma Client
-    const { PrismaClient } = await import('@prisma/client');
-    const prisma = new PrismaClient();
+    // 获取 Prisma Client 实例
+    const prisma = await getPrisma();
 
     // 获取指定 ID 的房间，包括它的图片
     const room = await prisma.room.findUnique({
@@ -15,11 +15,9 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
     });
 
     if (!room) {
-      await prisma.$disconnect();
       return NextResponse.json({ error: 'Room not found' }, { status: 404 });
     }
 
-    await prisma.$disconnect();
     return NextResponse.json(room);
   } catch (error) {
     console.error('Error fetching room:', error);
